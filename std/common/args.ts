@@ -20,12 +20,15 @@ export class Args {
     /**
      * Validates if the given expression is true. Otherwise throws an ArgumentError exception.
      * @param expr The expression that is going to be validated
-     * @param message The error message
+     * @param error The error message
      * @param code A code that identifies the error that is going to be thrown e.g. E_INVALID
      */
-    public static check(expr: boolean, message: string, code?: string): void {
+    public static check(expr: boolean, error: string | Error, code?: string): void {
         if (!expr) {
-            throw new ArgumentError(message, code);
+            if (error instanceof Error) {
+                throw error;
+            }
+            throw new ArgumentError(error, code);
         }
     }
 
@@ -36,6 +39,15 @@ export class Args {
      */
     public static notNull(obj: any, name: string): void {
         Args.check(obj != null, `${name} may not be null or undefined`, 'E_NULL');
+    }
+
+    /**
+     * Validates if the given parameter is a string. Otherwise throws an ArgumentError exception.
+     * @param {*} obj The value that is going to be validated
+     * @param {string} name A string which represents the name of the variable
+     */
+    public static notString(obj: any, name: string): void {
+        Args.check(typeof obj  === 'string', `${name} may be a string`, 'E_STRING');
     }
 
     /**

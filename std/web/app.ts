@@ -6,7 +6,7 @@ import { MediaTypeProvider } from './mediaTypeProvider.ts';
 import { HttpContext } from './context.ts';
 import { HttpNotFoundError } from '../common/mod.ts';
 import { DefaultErrorHandler, HttpErrorHandler } from './errors.ts';
-import { QuerystringConsumer } from './query.ts';
+import { QuerystringConsumer } from "./query.ts";
 
 export declare interface NetworkAddress {
     hostname: string;
