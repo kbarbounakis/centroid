@@ -4,7 +4,7 @@ import {hasOwnProperty} from './has-own-property.ts';
 /**
  * @param {string} tz
  */
-function convertTimezone(tz) {
+function convertTimezone(tz: string) {
     if (tz === "Z") return 0;
     const m = tz.match(/([+\-\s])(\d\d):?(\d\d)?/);
     if (m) {
@@ -48,7 +48,7 @@ function dateToString(date: any, timeZone: string) {
  * @param {Buffer} buffer
  * @returns {string}
  */
-function bufferToString(buffer) {
+function bufferToString(buffer: any): string {
     let hex = '';
     try {
         hex = buffer.toString('hex');
@@ -57,14 +57,14 @@ function bufferToString(buffer) {
         for (let i = 0; i < buffer.length; i++) {
             const byte = buffer[i];
             // noinspection JSCheckFunctionSignatures
-            hex += zeroPad(byte.toString(16));
+            hex += zeroPad(byte.toString(16), 2);
         }
     }
 
     return "X'" + hex + "'";
 }
 
-function objectToValues(object, timeZone) {
+function objectToValues(object: any, timeZone?: any) {
     const values = [];
     for (const key in object) {
         if (hasOwnProperty(object, key)) {
@@ -78,14 +78,14 @@ function objectToValues(object, timeZone) {
     return values.join(', ');
 }
 
-function arrayToList(array, timeZone) {
+function arrayToList(array: Array<any>, timeZone: any): string {
     return array.map(v => {
         if (Array.isArray(v)) return '(' + arrayToList(v, timeZone) + ')';
         return escape(v, true, timeZone);
     }).join(', ');
 }
 
-function escapeId(val, forbidQualified) {
+function escapeId(val: any, forbidQualified?: boolean): string {
     if (Array.isArray(val)) {
         return val.map(v => {
             return escapeId(v, forbidQualified);
@@ -114,7 +114,7 @@ function escape(val: any, stringifyObjects?: any, timeZone?: string): string {
         val = dateToString(val, timeZone || 'local');
     }
 
-    if (Buffer.isBuffer(val)) {
+    if (val instanceof ArrayBuffer) {
         return bufferToString(val);
     }
 
@@ -129,7 +129,7 @@ function escape(val: any, stringifyObjects?: any, timeZone?: string): string {
             return objectToValues(val, timeZone);
         }
     }
-    val = val.replace(STR_ESCAPE_REGEXP, s => {
+    val = val.replace(STR_ESCAPE_REGEXP, (s: string) => {
         switch(s) {
             case "\0": return "\\0";
             case "\n": return "\\n";
@@ -143,7 +143,7 @@ function escape(val: any, stringifyObjects?: any, timeZone?: string): string {
     return "'"+val+"'";
 }
 
-function format(sql, values, stringifyObjects, timeZone) {
+function format(sql: string, values?: any, stringifyObjects?: any, timeZone?: any) {
     values = (typeof values === 'undefined' || values === null) ? [] : [].concat(values);
     let index = 0;
     return sql.replace(/\?\??/g, match => {
@@ -168,7 +168,7 @@ export class SqlUtils {
      * @param {*} val
      * @returns {string}
      */
-    static escape(val: any) {
+    static escape(val: any): string {
         return escape(val);
     }
 
@@ -179,7 +179,7 @@ export class SqlUtils {
      * @param {*=} values
      * @returns {*}
      */
-    static format(sql: string, values?: any) {
+    static format(sql: string, values?: any): any {
         return format(sql, values);
     }
 

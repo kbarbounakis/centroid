@@ -6,3 +6,4 @@ export * from "./config.ts"
 export * from "./app.ts";
 export * from "./context.ts";
 export * from "./utils.ts";
+export * from "./adapter.ts";
