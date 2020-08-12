@@ -864,28 +864,30 @@ export class SqliteAdapter {
                     if (Deno.env.get('DENO_ENV')==='development') {
                         logger.info(`SQL:${prepared}, Parameters:${JSON.stringify(values)}`);
                     }
-                    let results: Array<any>;
+                    let results: any;
                     let result = [];
                     //validate statement
                     if (/^(SELECT|PRAGMA)/ig.test(prepared)) {
                         //prepare for select
                         try {
                             results = self.rawConnection.query(prepared);
+                            const columns = results.columns();
+                            const values = [...results.asObjects()];
                             // get first result
-                            if (results.length === 0) {
+                            if (values.length === 0) {
                                 // return an empty array
                                 return callback(null, []);
                             }
                             // enumerate values
-                            result = results[0].values.map( (x: any) => {
+                            result = values.map( (x: any) => {
                                 const obj = { };
-                                results[0].columns.forEach( (column: any, index: number) => {
+                                columns.forEach( (column: any) => {
                                     // define property
-                                    let value = x[index];
+                                    let value = x[column.name];
                                     if (SqliteAdapter.isDate(value)) {
                                         value = new Date(value);
                                     }
-                                    Object.defineProperty(obj, column, {
+                                    Object.defineProperty(obj, column.name, {
                                        configurable: true,
                                        enumerable: true,
                                        writable: true,

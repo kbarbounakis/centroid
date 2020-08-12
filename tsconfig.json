@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "experimentalDecorators": true,
+        "resolveJsonModule": true,
         "plugins": [
             {
                 "name": "typescript-deno-plugin",
